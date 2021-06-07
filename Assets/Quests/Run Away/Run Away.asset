@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f258fe89dd2fb5644a93132b81125ff9, type: 3}
+  m_Name: Run Away
+  m_EditorClassIdentifier: 
+  questID: runaway
+  questName: Run Away
+  questDescription: Run away from the orphanage...
+  rewards:
+  - typeOf: 0
+    id: 
+    quantity: 250
+  - typeOf: 1
+    id: iron
+    quantity: 20
+  questElements:
+  - {fileID: 11400000, guid: 0100080fb436f6d44ba7ba38f6c1ab7a, type: 2}
+  - {fileID: 11400000, guid: 6f4ca6dc3eb05b5459e46895248a5d22, type: 2}
+  locationTrigger:
+    position: {x: 0, y: 0, z: 0}
+    target: 0
+    id: 
+    prefab: {fileID: 0}
+    targetStatus: 3
+  status: 0
+  questUIManager: {fileID: 0}

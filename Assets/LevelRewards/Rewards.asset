@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4951ceed4206fc64f890a45f9f796be3, type: 3}
+  m_Name: Rewards
+  m_EditorClassIdentifier: 
+  levelRewards:
+  - {fileID: 11400000, guid: 20d1ac8acfa0f214aa02cee9018edf9e, type: 2}
+  - {fileID: 11400000, guid: b53fd0c41da16f4499264b8ad171de12, type: 2}
+  - {fileID: 11400000, guid: f332357f866d3c84d9652270557f4c35, type: 2}
+  - {fileID: 11400000, guid: 40e9c675ecd5a8b449f7299366d3ac97, type: 2}
+  - {fileID: 11400000, guid: a7b6570b7d77c16418e5c662c3eb4378, type: 2}
+  - {fileID: 11400000, guid: 891869b296e76944e88b2009f8c155e9, type: 2}
