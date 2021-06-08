@@ -423,7 +423,7 @@ public abstract class BluetoothImports : IDisposable
 
     protected Boolean Disposed { get { return FDisposed; } }
 
-    protected internal const String WclGattClientDllName = "..\\WclGattClientDll\\build\\WclGattClientDll.dll";
+    protected internal const string WclGattClientDllName = "WclGattClientDll.dll";
 
     public BluetoothImports()
     {

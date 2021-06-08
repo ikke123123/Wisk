@@ -1,40 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ThomasLib.Unity.Colors;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIBLEManager : MonoBehaviour
+public class UIBLEManager : MonoBehaviourBLECallbacks
 {
-    [SerializeField] private Button startSearch = null;
-    [SerializeField] private Button stopSearch = null;
     [SerializeField] private TMP_InputField deviceName = null;
+    [SerializeField] private int sceneTarget = 1;
 
     private void Start()
     {
         deviceName.text = BLEManager.Instance.targetDeviceName = PlayerPrefs.GetString("DeviceName", "");
-        SetButtons(true);
+    }
+
+    protected override void OnConnected()
+    {
+        SceneManager.LoadSceneAsync(sceneTarget);
     }
 
     public void NameChanged()
     {
         BLEManager.Instance.targetDeviceName = deviceName.text;
-        PlayerPrefs.SetString("DeviceName", "");
+        PlayerPrefs.SetString("DeviceName", deviceName.text);
     }
 
     public void StartSearch()
     {
-        SetButtons(false);
-    }
-
-    public void StopSearch()
-    {
-        SetButtons(true);
-    }
-
-    private void SetButtons(bool startSearchActive)
-    {
-        startSearch.gameObject.SetActive(startSearchActive);
-        stopSearch.gameObject.SetActive(!startSearchActive);
+        BLEManager.Instance.StartDiscovery();
     }
 }

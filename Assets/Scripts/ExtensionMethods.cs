@@ -11,4 +11,17 @@ public static class ExtensionMethods
             return 0;
         return (pos2.y - pos1.y) / distance * 100;
     }
+
+    public static bool GetBit(this byte input, int bitIndex) => (input & (1 << bitIndex - 1)) != 0;
+
+    public static uint GetUInt24(this byte[] bytes, int startIndex)
+    {
+        uint output = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            uint tempNumber = bytes[startIndex + i];
+            output += tempNumber << 8 * i;
+        }
+        return output;
+    }
 }
