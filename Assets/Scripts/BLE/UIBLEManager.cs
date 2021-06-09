@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ThomasLib.Unity.Colors;
+using ThomasLib.Unity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;

@@ -59,7 +59,7 @@ public class FMS_CP : Characteristic
     private bool responseReceived = true;
     private Queue<byte[]> sendStack = new Queue<byte[]>();
 
-    public bool ReceivedPermission { get; private set; }  = false;
+    public bool ReceivedPermission { get; private set; } = false;
 
     protected override void ReceivedData(byte[] receivedData, ref string response)
     {
@@ -84,13 +84,15 @@ public class FMS_CP : Characteristic
 
         responseReceived = true;
 
-        if (input == new byte[] { responseCode, requestControl, succes })
-            ReceivedPermission = true;
+        Debug.Log(input[0].ToString("X4") + input[1].ToString("X4") + input[2].ToString("X4"));
+
+        bool permissionTemp = false;
 
         switch (input[1])
         {
             case requestControl:
                 message += "Request Control ";
+                permissionTemp = true;
                 break;
             case reset:
                 message += "Reset ";
@@ -162,6 +164,8 @@ public class FMS_CP : Characteristic
         {
             case succes:
                 message += "was successful.";
+                if (permissionTemp)
+                    ReceivedPermission = true;
                 break;
             case opCodeNotSupported:
                 message += "was an unsupported OP code";
