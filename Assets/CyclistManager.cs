@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using BezierSolution;
 using UnityEngine.Events;
+using System;
 
-public class CyclistManager : MonoBehaviourBLECallbacks
+public class CyclistManager : MonoBehaviour
 {
     [SerializeField] private BezierWalkerWithSpeed walker = null;
     [SerializeField] private BezierSpline spline = null;
@@ -23,9 +24,14 @@ public class CyclistManager : MonoBehaviourBLECallbacks
     [SerializeField] private BikePhysics bikePhysics = null;
 
     private Coroutine shortUpdater, speedUpdater, longUpdater;
+    private FMS_IBD ibd = null;
+    private FMS_CP cp = null;
 
     private void OnEnable()
     {
+        ibd = BLEManager.Instance.fms_IBD;
+        cp = BLEManager.Instance.fms_CP;
+
         bikePhysics = new BikePhysics()
         {
             mass = mass
@@ -33,6 +39,13 @@ public class CyclistManager : MonoBehaviourBLECallbacks
         shortUpdater = StartCoroutine(ShortUpdater());
         speedUpdater = StartCoroutine(SpeedUpdater());
         longUpdater = StartCoroutine(LongUpdater());
+
+        ibd.AddCallbackTarget(IBDUpdater);
+    }
+
+    public void IBDUpdater(object sender, EventArgs e)
+    {
+        bikePhysics.power = ibd.InstPwr;
     }
 
     private IEnumerator LongUpdater()
@@ -43,14 +56,9 @@ public class CyclistManager : MonoBehaviourBLECallbacks
 
             Vector3 location = spline.MoveAlongSpline(ref normalizedT, bikePhysics.SpeedMS == 0 ? 1 : bikePhysics.SpeedMS * longRefreshTime);
             float oneSecGrade = ExtensionMethods.GetGrade(transform.position, location);
-            //ADD SOCKET FOR UPDATING FTMS SERVICE.
 
-            //ATTEMPT TO GET A MORE ACCURATE AVERAGE, BUT ABANANDONED BECAUSE OF LACK OF REASON:
-            //Vector3[] positions = new Vector3[averageGradeAccuracy];
-            //positions[0] = transform.position;
-
-            //for (int i = 1; i < averageGradeAccuracy; i++)
-            //    positions[i] = spline.MoveAlongSpline(ref normalizedT, bikePhysics.SpeedMS == 0 ? 1 : bikePhysics.SpeedMS * i * (longRefreshTime / averageGradeAccuracy - 1));
+            if (cp.ReceivedPermission)
+                cp.SetSimulationParameter(0f, oneSecGrade, bikePhysics.rollingCoeff, bikePhysics.frontalArea, bikePhysics.rho, bikePhysics.dragCoeff);
 
             onLongUpdate.Invoke();
             yield return new WaitForSeconds(longRefreshTime);

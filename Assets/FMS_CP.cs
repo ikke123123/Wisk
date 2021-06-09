@@ -59,6 +59,8 @@ public class FMS_CP : Characteristic
     private bool responseReceived = true;
     private Queue<byte[]> sendStack = new Queue<byte[]>();
 
+    public bool ReceivedPermission { get; private set; }  = false;
+
     protected override void ReceivedData(byte[] receivedData, ref string response)
     {
         InterpretResponseCode(receivedData, ref response);
@@ -81,6 +83,9 @@ public class FMS_CP : Characteristic
         }
 
         responseReceived = true;
+
+        if (input == new byte[] { responseCode, requestControl, succes })
+            ReceivedPermission = true;
 
         switch (input[1])
         {
@@ -171,6 +176,9 @@ public class FMS_CP : Characteristic
                 message += "was not permitted.";
                 break;
         }
+
+        Debug.Log(message);
+
         return true;
     }
     #endregion

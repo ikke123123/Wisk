@@ -173,7 +173,7 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
             string output = "";
             foreach (byte bytes in Value)
                 output += bytes.ToString() + "-";
-            Debug.Log("Characteristic " + Handle.ToString("X4") + " has been changed " + output);
+            //Debug.Log("Characteristic " + Handle.ToString("X4") + " has been changed " + output);
             if (Value != null && Value.Length > 0)
             {
                 Debug.Log(Value.Length);
@@ -183,7 +183,7 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
                     if (characteristic.ReceiveData(Handle, Value, out response))
                         break;
 
-                Debug.Log(response);
+                //Debug.Log(response);
             }
         }
         catch (Exception e)
