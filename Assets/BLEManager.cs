@@ -54,6 +54,7 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
         // Do not forget to clear found devices list.
         FDevices.Clear();
         FDevices = null;
+        readyToDiscover = true;
     }
 
     #endregion
@@ -87,7 +88,7 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
                 Debug.Log("No available Bluetooth Radio was found");
             else
             {
-                readyToDiscover = true;;
+                readyToDiscover = true;
             }
         }
     }
@@ -98,12 +99,13 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
     private void FClient_OnConnect(object sender, int Error)
     {
         isConnected = true;
+        MonoBehaviourBLECallbacks.Connected();
         if (Error != BluetoothErrors.WCL_E_SUCCESS)
             Debug.Log("Connect error: 0x" + Error.ToString("X8"));
         else
         {
             Debug.Log("Connected");
-            MonoBehaviourBLECallbacks.Connected();
+
             Debug.Log("Read services");
             GattServices Services;
             int Res = FClient.GetServices(out Services);
@@ -117,12 +119,11 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
                 {
                     for (byte s = 0; s < Services.Count; s++)
                     {
-                        if (Services.Services[s].Uuid.IsShortUuid)
-                            Debug.Log("Service: " + Services.Services[s].Uuid.ShortUuid.ToString("X4"));
-                        else
-                            Debug.Log("Service: " + Services.Services[s].Uuid.LongUuid.ToString());
+                        //if (Services.Services[s].Uuid.IsShortUuid)
+                        //    Debug.Log("Service: " + Services.Services[s].Uuid.ShortUuid.ToString("X4"));
+                        //else
+                        //    Debug.Log("Service: " + Services.Services[s].Uuid.LongUuid.ToString());
 
-                        Debug.Log("Read characteristics");
                         GattCharacteristics Chars;
                         Res = FClient.GetCharacteristics(Services.Services[s], out Chars);
                         if (Res != BluetoothErrors.WCL_E_SUCCESS)
@@ -138,7 +139,6 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
                                     GattCharacteristic gattCharacteristic = Chars.Chars[c];
                                     if (gattCharacteristic.Uuid.IsShortUuid)
                                     {
-                                        Debug.Log("Characteristic: " + gattCharacteristic.Uuid.ShortUuid.ToString("X4"));
                                         //Look for characteristics with the same target
                                         foreach (Characteristic characteristic in Characteristic.characteristics.Where(characteristic => characteristic.Address == gattCharacteristic.Uuid.ShortUuid))
                                         {
@@ -147,8 +147,8 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
                                             characteristic.Initialize();
                                         }
                                     }
-                                    else
-                                        Debug.Log("Characteristic: " + Chars.Chars[c].Uuid.LongUuid.ToString());
+                                    //else
+                                        //EXECUTE IF ITS A LONG HANDLE
                                 }
                             }
                         }
@@ -161,6 +161,8 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
     private void FClient_OnDisconnect(object sender, int Reason)
     {
         isConnected = false;
+        MonoBehaviourBLECallbacks.Disconnected(Reason);
+        StartDiscovery();
         Debug.Log("Disconnected with reason: 0x" + Reason.ToString("X8"));
     }
 
@@ -168,7 +170,10 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
     {
         try
         {
-            //Debug.Log("Characteristic " + Handle.ToString("X4") + " has been changed");
+            string output = "";
+            foreach (byte bytes in Value)
+                output += bytes.ToString() + "-";
+            Debug.Log("Characteristic " + Handle.ToString("X4") + " has been changed " + output);
             if (Value != null && Value.Length > 0)
             {
                 Debug.Log(Value.Length);

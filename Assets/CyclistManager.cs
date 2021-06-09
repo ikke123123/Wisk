@@ -4,7 +4,7 @@ using UnityEngine;
 using BezierSolution;
 using UnityEngine.Events;
 
-public class CyclistManager : MonoBehaviour
+public class CyclistManager : MonoBehaviourBLECallbacks
 {
     [SerializeField] private BezierWalkerWithSpeed walker = null;
     [SerializeField] private BezierSpline spline = null;

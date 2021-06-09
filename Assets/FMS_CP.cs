@@ -110,7 +110,7 @@ public class FMS_CP : Characteristic
                 message += "Start or Resume ";
                 break;
             case stopOrPause:
-                message += "Stopped or Paused ";
+                message += /*input[3] == stop ? "Stop " : "Pause "*/ "Stop or Pause ";
                 break;
             case setTargetedExpendedEnergy:
                 message += "Setting Targeted Expended Energy to " + BitConverter.ToUInt16(input, 3).ToString() + " Calories ";
@@ -137,7 +137,7 @@ public class FMS_CP : Characteristic
                 message += "Setting Targeted Time in Five Heart Rate Zones to " + new DateTime().AddSeconds(BitConverter.ToUInt16(input, 3)).ToString("HH:mm:ss") + " in Very Light Zone, " + new DateTime().AddSeconds(BitConverter.ToUInt16(input, 3)).ToString("HH:mm:ss") + " in Light Zone, " + new DateTime().AddSeconds(BitConverter.ToUInt16(input, 5)).ToString("HH:mm:ss") + " in Moderate Zone, " + new DateTime().AddSeconds(BitConverter.ToUInt16(input, 3)).ToString("HH:mm:ss") + " in Hard Zone, and " + new DateTime().AddSeconds(BitConverter.ToUInt16(input, 3)).ToString("HH:mm:ss") + " in Maximum Zone ";
                 break;
             case setIndoorBikeSimulationParameters:
-                message += "Setting Indoor Bike Simulation Parameters to " + (BitConverter.ToInt16(input, 3) * 0.001f).ToString() + " m/s Wind Speed, " + (BitConverter.ToInt16(input, 5) * 0.01f).ToString() + "% Grade, " + (input[6] * 0.0001f).ToString() + " Coefficient of Rolling Resistance, and " + (input[7] * 0.01f).ToString() + " kg/m Wind Resistance Coefficient ";
+                message += "Setting Indoor Bike Simulation Parameters "/* + (BitConverter.ToInt16(input, 2) * 0.001f).ToString() + " m/s Wind Speed, " + (BitConverter.ToInt16(input, 4) * 0.01f).ToString() + "% Grade, " + (input[5] * 0.0001f).ToString() + " Coefficient of Rolling Resistance, and " + (input[6] * 0.01f).ToString() + " kg/m Wind Resistance Coefficient "*/;
                 break;
             case setWheelCircumference:
                 message += "Setting Wheel Circumference " /*+ (BitConverter.ToUInt16(input, 3) * 0.1f).ToString() + " mm "*/;
@@ -200,7 +200,7 @@ public class FMS_CP : Characteristic
     /// <param name="_grade">In percentage, with a resolution of 0.01, from -327.68 to 327.67</param>
     /// <param name="rollingCoefficient">Unitless, with a resolution of 0.0001, from 0 to 0.0255</param>
     /// <param name="windResistanceCoefficient">In kilogram per meter, with a resolution of 0.01, from 0 to 2.55 which is the same as A*Cd*Rho.</param>
-    public void SendSimulationParameters(float _windSpeed, float _grade, float _rollingCoefficient, float _surfaceArea, float _airDensity, float _airResistanceCoefficient)
+    public void SetSimulationParameter(float _windSpeed, float _grade, float _rollingCoefficient, float _surfaceArea, float _airDensity, float _airResistanceCoefficient)
     {
         float _airResistance = _surfaceArea * _airDensity * _airResistanceCoefficient;
         _windSpeed *= 1 / 0.001f;
@@ -211,10 +211,10 @@ public class FMS_CP : Characteristic
         short grade = Convert.ToInt16(Mathf.RoundToInt(_grade));
         byte rollingCoefficient = Convert.ToByte(Mathf.RoundToInt(_rollingCoefficient));
         byte airResistanceCoefficient = Convert.ToByte(Mathf.RoundToInt(_airResistance));
-        SendSimulationParameters(windSpeed, grade, rollingCoefficient, airResistanceCoefficient);
+        SetSimulationParameter(windSpeed, grade, rollingCoefficient, airResistanceCoefficient);
     }
 
-    public void SendSimulationParameters(short _windSpeed, short _grade, byte _coefficientOfRollingResistance, byte _windResistanceCoefficient)
+    public void SetSimulationParameter(short _windSpeed, short _grade, byte _coefficientOfRollingResistance, byte _windResistanceCoefficient)
     {
         List<byte> sendData = new List<byte>();
         sendData.Add(setIndoorBikeSimulationParameters); //Address
@@ -251,10 +251,10 @@ public class FMS_CP : Characteristic
     public void InitializeData()
     {
         SendData(new byte[] { requestControl });
-        PauseOrStop(true);
         ResetData();
         SetWheelCircumference(wheelCircumference);
         StartOrResume();
+        SetSimulationParameter(0f, 0f, 0.00250f, 0.650f, 1.293f, 0.350f);
     }
 
     private void SendData(byte[] data)
@@ -281,7 +281,7 @@ public class FMS_CP : Characteristic
                 }
                 else sendStack.Dequeue();
             }
-            else Debug.Log("Waiting for response...");
+            //else Debug.Log("Waiting for response...");
             Thread.Sleep(250);
         }
     }

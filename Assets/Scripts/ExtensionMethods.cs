@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public static class ExtensionMethods
 {
@@ -13,6 +14,7 @@ public static class ExtensionMethods
     }
 
     public static bool GetBit(this byte input, int bitIndex) => (input & (1 << bitIndex - 1)) != 0;
+
 
     public static uint GetUInt24(this byte[] bytes, int startIndex)
     {

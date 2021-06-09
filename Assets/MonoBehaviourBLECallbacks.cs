@@ -18,14 +18,23 @@ public class MonoBehaviourBLECallbacks : MonoBehaviour
     public static void Connected()
     {
         foreach (MonoBehaviourBLECallbacks monoBehaviourBLECallback in callbacks)
-        {
             monoBehaviourBLECallback.OnConnected();
-        }
+    }
+
+    public static void Disconnected(int reason)
+    {
+        foreach (MonoBehaviourBLECallbacks monoBehaviourBLECallback in callbacks)
+            monoBehaviourBLECallback.OnDisconnected(reason);
     }
 
     private void OnDestroy() => callbacks.Remove(this);
 
     protected virtual void OnConnected()
+    {
+
+    }
+
+    protected virtual void OnDisconnected(int reason)
     {
 
     }

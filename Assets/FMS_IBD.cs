@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FMS_IBD : Characteristic
@@ -17,30 +15,33 @@ public class FMS_IBD : Characteristic
         GetData(receivedData, ref response);
     }
 
-    public enum Flags { MoreData, AverageSpeed, InstantaneousCadence, AverageCadence, TotalDistance, ResistenceLevel, InstantaneousPower, AveragePower, ExpendedEnergy, HeartRate, MetabolicEquivalent, ElapsedTime, RemainingTime };
+    [Flags]
+    public enum Flags : ushort
+    {
+        MoreData = 0b_1,
+        AverageSpeed = 0b_10,
+        InstantaneousCadence = 0b_100,
+        AverageCadence = 0b_1000,
+        TotalDistance = 0b_1_0000,
+        ResistenceLevel = 0b_10_0000,
+        InstantaneousPower = 0b_100_0000,
+        AveragePower = 0b_1000_0000,
+        ExpendedEnergy = 0b_1_0000_0000,
+        HeartRate = 0b_10_0000_0000,
+        MetabolicEquivalent = 0b_100_0000_0000,
+        ElapsedTime = 0b_1000_0000_0000,
+        RemainingTime = 0b_1_0000_0000_0000
+    };
 
-    bool[] flags = null;
+    Flags flags = Flags.MoreData;
+
     ushort flagValue = 0;
 
     private void GetFlags(byte[] bytes, ref string message)
     {
-        //Length of the number of flags.
-        flags = new bool[13];
-
-        //Length of the two bytes that contain the flags.
-        for (int i = 0; i < 2; i++)
-        {
-            //Number of bits in a byte.
-            for (int j = 0; j < 8; j++)
-            {
-                if (!(j + i * 7 < flags.Length)) break;
-                //Set the corresponding flags to the true/false of the bit.
-                flags[j + i * 7] = bytes[i].GetBit(j);
-                message += " " + (Flags)(j + i * 7) + ": " + flags[j + i * 7];
-            }
-        }
-
         flagValue = BitConverter.ToUInt16(bytes, 0);
+        flags = (Flags)flagValue;
+        message += flags;
     }
 
     public float InstSpeed { get; private set; } = 0;
@@ -51,7 +52,7 @@ public class FMS_IBD : Characteristic
     public float ResistLvl { get; private set; } = 0;
     public int InstPwr { get; private set; } = 0;
     public int AvgPwr { get; private set; } = 0;
-    public int TotEnergy { get; private set; } = 0;
+    public int EnergyExp { get; private set; } = 0;
     public int EnergyHr { get; private set; } = 0;
     public int EnergyMin { get; private set; } = 0;
     public int HrtRate { get; private set; } = 0;
@@ -64,79 +65,92 @@ public class FMS_IBD : Characteristic
 
     private void GetData(byte[] bytes, ref string message)
     {
+        //Start at two, which is passing the flags, and is inclusive.
         int i = 2;
-        for (int j = 0; j < flags.Length; j++)
+
+        InstSpeed = GetUShort(bytes, ref i, ref message, "Instantaneous speed") / 100;
+
+        if (flags.HasFlag(Flags.AverageSpeed))
         {
-            if (flags[j] || (!flags[j] && j == 0) || (!flags[j] && j == 2))
-            {
-                //Messages for outliers
-                if (j != 8 || j == 0)
-                    message += " " + (Flags)j + ": ";
-
-                switch (j)
-                {
-                    case 0:
-                        message += "Instantaneous speed: "; 
-                        message += InstSpeed = BitConverter.ToUInt16(bytes, i) / 100;
-                        i += 2;
-                        break;
-                    case 1:
-                        message += AvgSpeed = BitConverter.ToUInt16(bytes, i) / 100;
-                        i += 2;
-                        break;
-                    case 2:
-                        message += InstCad = BitConverter.ToUInt16(bytes, i) / 2;
-                        i += 2;
-                        break;
-                    case 3:
-                        message += AvgCad = BitConverter.ToUInt16(bytes, i) / 2;
-                        i += 2;
-                        break;
-                    case 4:
-                        message += TotDistance = bytes.GetUInt24(i) / 1000;
-                        i += 3;
-                        break;
-                    case 5:
-                        message += ResistLvl = BitConverter.ToInt16(bytes, i) / 10;
-                        i += 2;
-                        break;
-                    case 6:
-                        message += InstPwr = BitConverter.ToInt16(bytes, i);
-                        i += 2;
-                        break;
-                    case 7:
-                        message += AvgPwr = BitConverter.ToInt16(bytes, i);
-                        i += 2;
-                        break;
-                    case 8:
-                        message += "Total Energy: ";
-                        message += TotEnergy = BitConverter.ToUInt16(bytes, i);
-                        i += 2;
-                        message += "Energy per Hour: ";
-                        message += EnergyHr = BitConverter.ToUInt16(bytes, i);
-                        i += 2;
-                        message += "Energy per Minute: ";
-                        message += EnergyMin = bytes[i];
-                        i++;
-                        break;
-                    case 9:
-                        message += HrtRate = bytes[i];
-                        i++;
-                        break;
-                    case 10:
-                        message += Meta = bytes[i] / 10;
-                        i++;
-                        break;
-                    case 11:
-                        message += ElapsedSec = BitConverter.ToUInt16(bytes, i);
-                        i += 2;
-                        break;
-                    case 12:
-                        message += RemainingSec = BitConverter.ToUInt16(bytes, i);
-                        break;
-
-                }
-            }
+            AvgSpeed = GetUShort(bytes, ref i, ref message, "Average Speed") / 100;
         }
+        if (flags.HasFlag(Flags.InstantaneousCadence))
+        {
+            InstCad = GetUShort(bytes, ref i, ref message, "Instantaneous cadence") / 2;
+        }
+        if (flags.HasFlag(Flags.AverageCadence))
+        {
+            InstCad = GetUShort(bytes, ref i, ref message, "Average cadence") / 2;
+        }
+        if (flags.HasFlag(Flags.TotalDistance))
+        {
+            message += " Total Distance: ";
+            TotDistance = bytes.GetUInt24(i) / 1000f;
+            message += TotDistance;
+            i += 3;
+        }
+        if (flags.HasFlag(Flags.ResistenceLevel))
+        {
+            ResistLvl = GetUShort(bytes, ref i, ref message, "Resistance Level") / 10;
+        }
+        if (flags.HasFlag(Flags.InstantaneousPower))
+        {
+            InstPwr = GetUShort(bytes, ref i, ref message, "Instantaneous power");
+        }
+        if (flags.HasFlag(Flags.AveragePower))
+        {
+            AvgPwr = GetUShort(bytes, ref i, ref message, "Average Power");
+        }
+        if (flags.HasFlag(Flags.ExpendedEnergy))
+        {
+            EnergyExp = GetUShort(bytes, ref i, ref message, "Expended Energy");
+
+            EnergyHr = GetUShort(bytes, ref i, ref message, "Energy per hour");
+
+            EnergyMin = GetByte(bytes, ref i, ref message, "Energy per minute");
+        }
+        if (flags.HasFlag(Flags.HeartRate))
+        {
+            HrtRate = GetByte(bytes, ref i, ref message, "Heart rate");
+        }
+        if (flags.HasFlag(Flags.MetabolicEquivalent))
+        {
+            Meta = GetByte(bytes, ref i, ref message, "Metabolic equivalent") / 10;
+        }
+        if (flags.HasFlag(Flags.ElapsedTime))
+        {
+            ElapsedSec = GetUShort(bytes, ref i, ref message, "Elapsed seconds");
+        }
+        if (flags.HasFlag(Flags.RemainingTime))
+        {
+            RemainingSec = GetUShort(bytes, ref i, ref message, "Remaining seconds");
+        }
+    }
+
+    private ushort GetUShort(byte[] bytes, ref int i, ref string message, string variableName)
+    {
+        message += " "+ variableName + ": ";
+        ushort output = BitConverter.ToUInt16(bytes, i);
+        message += output;
+        i += 2;
+        return output;
+    }
+
+    private short GetShort(byte[] bytes, ref int i, ref string message, string variableName)
+    {
+        message += " " + variableName + ": ";
+        short output = BitConverter.ToInt16(bytes, i);
+        message += output;
+        i += 2;
+        return output;
+    }
+
+    private byte GetByte(byte[] bytes, ref int i, ref string message, string variableName)
+    {
+        message += " " + variableName + ": ";
+        byte output = bytes[i];
+        message += output;
+        i ++;
+        return output;
     }
 }
