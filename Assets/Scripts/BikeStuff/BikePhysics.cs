@@ -69,6 +69,9 @@ public class BikePhysics
     /// </summary>
     public float grade = 0;
 
+    public const bool allowNegative = false;
+    public const float minSpeed = 0.1f;
+
     public float UpdateSpeed(float timeStep)
     {
         return SpeedMS = GetNewVelocity(power, SpeedMS, grade, mass, timeStep);
@@ -78,7 +81,9 @@ public class BikePhysics
     {
         float powerNeeded = GetTotalForce(velocity, grade, mass) * velocity;
         float netPower = power - powerNeeded;
-        return Mathf.Sqrt(velocity * velocity + 2 * netPower * timeStep / mass);
+        float netSpeed = velocity * velocity + 2 * netPower * timeStep / mass;
+        float output = Mathf.Sqrt(Mathf.Abs(netSpeed));
+        return ((output < minSpeed) ? 0 : output * (netSpeed >= 0 && !allowNegative ? 1 : -1)); //Limiter and a thing that converts the value back to a negative value if allowNegative is turned on.
     }
 
     private float GetTotalForce(float velocity, float grade, float mass) => FDrag(velocity) + FRolling(grade, mass, velocity) + FGravity(grade, mass);

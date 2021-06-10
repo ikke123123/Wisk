@@ -52,7 +52,7 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
             }
         }
         // Do not forget to clear found devices list.
-        FDevices.Clear();
+        if (FDevices != null) FDevices.Clear();
         FDevices = null;
         readyToDiscover = true;
     }

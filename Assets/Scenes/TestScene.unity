@@ -11952,7 +11952,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spline: {fileID: 469348657}
   travelMode: 1
-  speed: 5
+  speed: 9.8
   m_normalizedT: 0
   rotationLerpModifier: 10
   lookAt: 1

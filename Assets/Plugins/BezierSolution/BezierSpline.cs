@@ -709,9 +709,9 @@ namespace BezierSolution
 			float localT = t - startIndex;
 			float oneMinusLocalT = 1f - localT;
 
-			return 3f * oneMinusLocalT * oneMinusLocalT * ( startPoint.followingControlPointPosition - startPoint.position ) +
-				   6f * oneMinusLocalT * localT * ( endPoint.precedingControlPointPosition - startPoint.followingControlPointPosition ) +
-				   3f * localT * localT * ( endPoint.position - endPoint.precedingControlPointPosition );
+            return 3f * oneMinusLocalT * oneMinusLocalT * (startPoint.followingControlPointPosition - startPoint.position) +
+                   6f * oneMinusLocalT * localT * (endPoint.precedingControlPointPosition - startPoint.followingControlPointPosition) +
+                   3f * localT * localT * (endPoint.position - endPoint.precedingControlPointPosition);
 		}
 
 		public Vector3 GetNormal( float normalizedT )

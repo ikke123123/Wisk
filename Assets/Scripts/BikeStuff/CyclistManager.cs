@@ -76,6 +76,7 @@ public class CyclistManager : MonoBehaviour
         {
             float normalizedT = walker.NormalizedT;
             Vector3 location = spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * shortRefreshTime, 0.5f, 3f));
+
             bikePhysics.grade = ExtensionMethods.GetGrade(transform.position, location);
             onShortUpdate.Invoke();
             gradeOmeter.SetValue(bikePhysics.grade);
@@ -88,13 +89,7 @@ public class CyclistManager : MonoBehaviour
         while (true)
         {
             float speed = bikePhysics.UpdateSpeed(speedRefreshTime);
-            if (speed > 0.1f)
-            {
-                if (!walker.enabled)
-                    walker.enabled = true;
-                walker.speed = speed;
-            }
-            else walker.enabled = false;
+            walker.speed = speed;
             onSpeedUpdate.Invoke();
             speedOmeter.SetValue(bikePhysics.SpeedKPH);
             yield return new WaitForSeconds(speedRefreshTime);
