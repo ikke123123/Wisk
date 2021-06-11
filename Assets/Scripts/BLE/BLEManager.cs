@@ -68,8 +68,6 @@ public class BLEManager : MonoBehaviourSingleton<BLEManager>
 
     private void FManager_AfterOpen(object sender, EventArgs e)
     {
-        Debug.Log("Bluetooth manager has been opened");
-
         // Look for working radio.
         if (FManager.Count == 0)
             Debug.Log("No Bluetooth Radios were found");

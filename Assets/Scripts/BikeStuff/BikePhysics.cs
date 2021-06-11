@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using ThomasLib.Num;
 
 [Serializable]
 public class BikePhysics
@@ -63,7 +64,7 @@ public class BikePhysics
     /// <summary>
     /// Power in watts
     /// </summary>
-    public float power = 0;
+    public int power = 0;
     /// <summary>
     /// Grade in percent
     /// </summary>
@@ -77,7 +78,7 @@ public class BikePhysics
         return SpeedMS = GetNewVelocity(power, SpeedMS, grade, mass, timeStep);
     }
 
-    private float GetNewVelocity(float power, float velocity, float grade, float mass, float timeStep)
+    private float GetNewVelocity(int power, float velocity, float grade, float mass, float timeStep)
     {
         float powerNeeded = GetTotalForce(velocity, grade, mass) * velocity;
         float netPower = power - powerNeeded;

@@ -1,4 +1,5 @@
 ﻿using System;
+using ThomasLib.Bytes;
 using UnityEngine;
 
 public class FMS_IBD : Characteristic

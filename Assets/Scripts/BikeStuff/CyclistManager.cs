@@ -4,6 +4,7 @@ using UnityEngine;
 using BezierSolution;
 using UnityEngine.Events;
 using System;
+using ThomasLib.Unity;
 
 public class CyclistManager : MonoBehaviour
 {
@@ -19,10 +20,10 @@ public class CyclistManager : MonoBehaviour
     [SerializeField] private float mass = 80;
 
     [SerializeField] private UnityEvent onLongUpdate, onShortUpdate, onSpeedUpdate = null;
-    [SerializeField] private MonoBehaviourOmeter speedOmeter, gradeOmeter, powerOmeter = null;
+    [SerializeField] private MonoBehaviourOmeter speedOmeter, gradeOmeter, powerOmeter, cadanceOmeter = null;
 
     [Header("Debug")]
-    [SerializeField] private BikePhysics bikePhysics = null;
+    public BikePhysics bikePhysics = null;
 
     private Coroutine shortUpdater, speedUpdater, longUpdater;
     private FMS_IBD ibd = null;
@@ -50,6 +51,7 @@ public class CyclistManager : MonoBehaviour
     {
         bikePhysics.power = ibd.InstPwr;
         powerOmeter.SetValue(bikePhysics.power);
+        cadanceOmeter.SetValue(ibd.InstCad);
     }
 
     private IEnumerator LongUpdater()
@@ -59,7 +61,7 @@ public class CyclistManager : MonoBehaviour
             float normalizedT = walker.NormalizedT;
 
             Vector3 location = spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * longRefreshTime, 1f, 36f));
-            float oneSecGrade = ExtensionMethods.GetGrade(transform.position, location);
+            float oneSecGrade = Vector3Tool.GetGrade(transform.position, location);
 
             if (cp.ReceivedPermission)
                 cp.SetSimulationParameter(0f, oneSecGrade, bikePhysics.rollingCoeff, bikePhysics.frontalArea, bikePhysics.rho, bikePhysics.dragCoeff);
@@ -77,7 +79,7 @@ public class CyclistManager : MonoBehaviour
             float normalizedT = walker.NormalizedT;
             Vector3 location = spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * shortRefreshTime, 0.5f, 3f));
 
-            bikePhysics.grade = ExtensionMethods.GetGrade(transform.position, location);
+            bikePhysics.grade = Vector3Tool.GetGrade(transform.position, location);
             onShortUpdate.Invoke();
             gradeOmeter.SetValue(bikePhysics.grade);
             yield return new WaitForSeconds(shortRefreshTime);
