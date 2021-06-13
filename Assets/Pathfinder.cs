@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
 using ThomasLib.Unity;
-using System.IO;
 
 [ExecuteInEditMode]
 public class Pathfinder : MonoBehaviour
@@ -54,7 +50,6 @@ public class Pathfinder : MonoBehaviour
 
         do
         {
-            Debug.Log(selectedPath.LastPoint.gameObject.name + " " + (selectedPath.distance + selectedPath.length).ToString());
             Road[] selectedRoads = selectedPath.LastPoint.roads;
 
             foreach (Road road in selectedRoads)
