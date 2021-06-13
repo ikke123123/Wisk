@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using ThomasLib.Unity;
+using System;
 
 [ExecuteInEditMode]
 public class Pathfinder : MonoBehaviour
 {
-    [SerializeField] private Point startPoint;
-    [SerializeField] private Point endPoint;
+    public Point startPoint;
+    public Point endPoint;
 
-    private Path goodPath = null;
+    private RoadPath goodPath = null;
     private Vector3[,] debugPoints = null;
 
     private void Update()
@@ -21,7 +22,7 @@ public class Pathfinder : MonoBehaviour
 
     public void CalculatePath()
     {
-        Path goodPath = GetBestPath(startPoint, endPoint);
+        RoadPath goodPath = PathFinding.GetBestPath(startPoint, endPoint);
 
         debugPoints = new Vector3[goodPath.Roads.Count, 2];
         Point beginPoint = goodPath.StartPoint;
@@ -32,17 +33,20 @@ public class Pathfinder : MonoBehaviour
             debugPoints[i, 1] = beginPoint.transform.position;
         }
     }
+}
 
-    public Path GetBestPath(Point start, Point end)
+public static class PathFinding
+{
+    public static RoadPath GetBestPath(Point start, Point end)
     {
         List<Point> lockedPoints = new List<Point>();
-        List<Path> activePaths = new List<Path>();
-        Path selectedPath = null;
+        List<RoadPath> activePaths = new List<RoadPath>();
+        RoadPath selectedPath = null;
         int maxTimeOut = 1000;
         int timeOut = 0;
 
         lockedPoints.Add(start);
-        selectedPath = new Path(start)
+        selectedPath = new RoadPath(start)
         {
             length = 0,
             distance = float.MaxValue
@@ -57,9 +61,9 @@ public class Pathfinder : MonoBehaviour
                 if (!lockedPoints.Contains(road.end))
                 {
                     if (road.end == end)
-                        return new Path(selectedPath, road);
+                        return new RoadPath(selectedPath, road);
 
-                    Path newPath = new Path(selectedPath, road);
+                    RoadPath newPath = new RoadPath(selectedPath, road);
                     newPath.length += Vector3Tool.GetFlatDistance(selectedPath.LastPoint.transform.position, road.end.transform.position);
                     newPath.distance = Vector3Tool.GetFlatDistance(end.transform.position, road.end.transform.position);
                     activePaths.Add(newPath);
@@ -67,9 +71,9 @@ public class Pathfinder : MonoBehaviour
             }
 
             float lowestTotal = float.MaxValue;
-            List<Path> scrubList = new List<Path>();
+            List<RoadPath> scrubList = new List<RoadPath>();
 
-            foreach (Path activePath in activePaths)
+            foreach (RoadPath activePath in activePaths)
             {
                 if (!lockedPoints.Contains(activePath.LastPoint))
                 {
@@ -97,40 +101,40 @@ public class Pathfinder : MonoBehaviour
 
         return null;
     }
+}
 
-    public class Path
+public class RoadPath
+{
+    public RoadPath(Point lastPoint)
     {
-        public Path(Point lastPoint)
-        {
-            this.lastPoint = lastPoint;
-            StartPoint = lastPoint;
-        }
-
-        public Path(params Road[] roads)
-        {
-            Roads.AddRange(roads);
-        }
-
-        public Path(Path path)
-        {
-            length = path.length;
-            Roads.AddRange(path.Roads);
-            StartPoint = path.StartPoint;
-        }
-
-        public Path(Path path, params Road[] roads)
-        {
-            length = path.length;
-            Roads.AddRange(path.Roads);
-            Roads.AddRange(roads);
-            StartPoint = path.StartPoint;
-        }
-
-        public List<Road> Roads { get; private set; } = new List<Road>();
-        public float length = 0;
-        public float distance = 0;
-        public Point StartPoint { get; private set; } = null;
-        public Point LastPoint => lastPoint != null ? lastPoint : Roads[Roads.Count - 1].end;
-        private Point lastPoint = null;
+        this.lastPoint = lastPoint;
+        StartPoint = lastPoint;
     }
+
+    public RoadPath(params Road[] roads)
+    {
+        Roads.AddRange(roads);
+    }
+
+    public RoadPath(RoadPath path)
+    {
+        length = path.length;
+        Roads.AddRange(path.Roads);
+        StartPoint = path.StartPoint;
+    }
+
+    public RoadPath(RoadPath path, params Road[] roads)
+    {
+        length = path.length;
+        Roads.AddRange(path.Roads);
+        Roads.AddRange(roads);
+        StartPoint = path.StartPoint;
+    }
+
+    public List<Road> Roads { get; private set; } = new List<Road>();
+    public float length = 0;
+    public float distance = 0;
+    public Point StartPoint { get; private set; } = null;
+    public Point LastPoint => lastPoint != null ? lastPoint : Roads[Roads.Count - 1].end;
+    private Point lastPoint = null;
 }

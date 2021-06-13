@@ -185,7 +185,7 @@ public class Training
                 debug += bytes.ToString("X4");
             }
             Debug.Log(debug);
-            fS.WriteAsync(ToBytes(), 0, byters.Length);
+            fS.Write(ToBytes(), 0, byters.Length);
             fS.Close();
         }
     }
