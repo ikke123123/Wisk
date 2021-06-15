@@ -14,7 +14,9 @@ public class Quest : ScriptableObject
 
     public QuestElement[] questElements = null;
 
+    public bool useLocationTrigger = false;
     public LocationTrigger locationTrigger = null;
+    public LocationTriggerData locationTriggerData;
 
     [Header("Debug")]
     public Status status = Status.Locked;
@@ -98,7 +100,8 @@ public class Quest : ScriptableObject
 
     internal void OnLockedLoaded()
     {
-        Debug.LogError("Not implemented");
+        if (useLocationTrigger)
+            locationTrigger.Spawn(locationTriggerData);
     }
 
     internal void OnCompletedLoaded()

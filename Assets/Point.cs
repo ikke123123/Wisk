@@ -5,5 +5,6 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Point : MonoBehaviour
 {
-    public Road[] roads;
+    public Road[] roadsAway;
+    public Road[] roadsTowards;
 }

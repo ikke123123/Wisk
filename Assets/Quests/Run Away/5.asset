@@ -10,45 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06e7fbb3b46b5fe46a39ce3f5fd59c5a, type: 3}
-  m_Name: 1
+  m_Name: 5
   m_EditorClassIdentifier: 
   questID: runaway
-  questElementID: runaway01
-  questElementName: Pedal Away
-  questElementDescription: Pedal away from the orphanage...
+  questElementID: runaway05
+  questElementName: Go to your new Shed
+  questElementDescription: 
   dependency:
     dependencies: 0
-    nextQuestElementIDs:
-    - {fileID: 11400000, guid: 6f4ca6dc3eb05b5459e46895248a5d22, type: 2}
+    nextQuestElementIDs: []
     questElementIDsFailed: []
     questElementIDs: []
     myElement: {fileID: 0}
   useRewards: 0
   rewards:
-  - typeOf: 0
-    id: 
-    quantity: 0
-  - typeOf: 0
-    id: 
-    quantity: 0
-  - typeOf: 0
-    id: 
-    quantity: 0
-  - typeOf: 0
-    id: 
-    quantity: 0
-  - typeOf: 0
-    id: 
-    quantity: 0
+  - typeOf: 1
+    id: gold
+    quantity: 200
   useDialogue: 0
   dialogue: []
   useLocationTrigger: 1
   locationTriggerPrefab: {fileID: 11400000, guid: d925bba16cb06204fb8018f11c47949a, type: 2}
   locationTrigger:
-    position: {x: -232.1, y: 10, z: 276.9}
+    position: {x: 53.9, y: 10, z: 189}
     target: 1
-    id: runaway01
+    id: runaway04
     targetStatus: 3
-  status: 0
+  status: 2
   questUIManager: {fileID: 0}
   questUIManagerSpot: 0

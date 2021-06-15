@@ -8,9 +8,11 @@ using ThomasLib.Num;
 using UnityEngine;
 using System.Linq;
 
-[ExecuteInEditMode]
+//BUILD THE GRADE MEASURER INTO THIS ONE.
+//[ExecuteInEditMode]
 public class CyclistTrackFollower : MonoBehaviour
 {
+    public static CyclistTrackFollower cTF = null;
 
     [Header("Settings")]
     [SerializeField] private float maxDegreesLookPerSecond = 5f;
@@ -19,18 +21,26 @@ public class CyclistTrackFollower : MonoBehaviour
     /// </summary>
     public float speed = 5;
     public CyclistMode cyclistMode;
-
-
-    [Header("Move Route")]
-    [SerializeField] private List<Road> trackToFollow = new List<Road>();
+    public Point[] allPoints;
 
     [Header("Navigate To Point")]
     [SerializeField] private Point pointToGoTo = null;
+    [SerializeField] private Transform locationToGoTo = null;
+
+    [Header("Debug")]
+    public Road currentTrack = null;
+    [SerializeField] public List<Road> trackToFollow = new List<Road>();
 
     [Range(0f, 1f)]
-    private float m_normalizedT = 0f;
-    public Road currentTrack = null;
+    public float m_normalizedT = 0f;
     private Quaternion lastRotation = Quaternion.identity;
+
+    private void Awake()
+    {
+        if (cTF != null && cTF != this)
+            Destroy(cTF);
+        cTF = this;
+    }
 
     private void Start()
     {
@@ -45,20 +55,45 @@ public class CyclistTrackFollower : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
         if (pointToGoTo != null)
         {
-            trackToFollow = PathFinding.GetBestPath(currentTrack.end, pointToGoTo).Roads;
-            cyclistMode = CyclistMode.ToPoint;
+            SetRoute(pointToGoTo);
             pointToGoTo = null;
         }
-
+        if (locationToGoTo != null)
+        {
+            SetRoute(locationToGoTo.position);
+            locationToGoTo = null;
+        }
+#endif
         UpdatePosition(Time.deltaTime);
+    }
+
+    public static void SetRoute(Vector3 targetPosition)
+    {
+        RoadPath roadPath = PathFinding.GetBestPath(cTF.currentTrack.end, targetPosition, cTF.allPoints);
+        if (roadPath != null)
+        {
+            cTF.trackToFollow.AddRange(roadPath.Roads);
+            cTF.cyclistMode = CyclistMode.ToPoint;
+        }
+    }
+
+    public static void SetRoute(Point targetPoint)
+    {
+        RoadPath roadPath = PathFinding.GetBestPath(cTF.trackToFollow.Last().end, targetPoint);
+        if (roadPath != null)
+        {
+            cTF.trackToFollow.AddRange(roadPath.Roads);
+            cTF.cyclistMode = CyclistMode.ToPoint;
+        }
     }
 
     private void UpdatePosition(float deltaTime)
     {
         if (speed < 0)
-            Debug.LogErrorFormat("Yeah this wasn't made for something like that, please just don't do it either. Speed was: {0}", speed);
+            Debug.LogErrorFormat("Yeah this wasn't made for something like that, please just don't do it. Speed was: {0}", speed);
 
         //Get speed for the time in between frames.
         float targetSpeed = speed * deltaTime;
@@ -87,15 +122,22 @@ public class CyclistTrackFollower : MonoBehaviour
             {
                 int indexOfCurrentTrack = trackToFollow.GetIndexOfFirst(currentTrack);
                 if (trackToFollow.Count > indexOfCurrentTrack + 1) //If there are more roads in the trackToFollow list select the next one.
+                {
                     currentTrack = trackToFollow[indexOfCurrentTrack + 1];
-                else cyclistMode = CyclistMode.Continuous;
+                    trackToFollow.RemoveAt(indexOfCurrentTrack);
+                }
+                else
+                {
+                    trackToFollow.Clear();
+                    cyclistMode = CyclistMode.Continuous;
+                }
             }
 
             //Randomly selects a new road.
             if (cyclistMode == CyclistMode.Continuous)
             {
                 //REALLY JANKY BUT OK.
-                currentTrack = currentTrack.end.roads.SelectRandom();
+                currentTrack = currentTrack.end.roadsAway.SelectRandom();
             }
 
             //Get the position that the bike should move to, just like it normally would.

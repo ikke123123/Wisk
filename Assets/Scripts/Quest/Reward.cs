@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [Serializable]
@@ -42,3 +41,35 @@ public class Reward
 
     public enum TypeOf { XP, Item };
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(Reward))]
+[CanEditMultipleObjects]
+public class RewardEditor : Editor
+{
+    SerializedProperty typeOf;
+    SerializedProperty id;
+    SerializedProperty quantity;
+
+    private void OnEnable()
+    {
+        typeOf = serializedObject.FindProperty("typeOf");
+        id = serializedObject.FindProperty("id");
+        quantity = serializedObject.FindProperty("quantity");
+    }
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+
+        EditorGUILayout.PropertyField(typeOf, new GUIContent("Type of", "The type of reward."));
+        if (typeOf.enumValueIndex == (int)Reward.TypeOf.Item)
+        {
+            EditorGUILayout.PropertyField(id, new GUIContent("ID", "The ID of the item."));
+        }
+        EditorGUILayout.PropertyField(quantity, new GUIContent("Quantity", "Number of the item that must be given."));
+
+        serializedObject.ApplyModifiedProperties();
+    }
+}
+#endif

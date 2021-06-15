@@ -1,40 +1,20 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class LocationTrigger
+[CreateAssetMenu(fileName = "New Location Trigger Prefab", menuName = "Location Trigger Prefab")]
+public class LocationTrigger : ScriptableObject
 {
-    public Vector3 position = Vector3.zero;
-    public Target target = Target.Quest;
-    public string id = null;
     public GameObject prefab = null;
-    public Status targetStatus = Status.Completed;
 
-    private GameObject spawnedObject = null;
-
-    public void Initiate()
+    public GameObject Spawn(LocationTriggerData locationTriggerData, bool setRoute = false)
     {
-        spawnedObject = GameObject.Instantiate(prefab, position, Quaternion.identity);
-        spawnedObject.GetComponent<LocationPinger>().locationTrigger = this;
+        GameObject locationTrigger = Instantiate(prefab, locationTriggerData.position, Quaternion.identity);
+        locationTrigger.GetComponent<LocationTriggerMonobehaviour>().locationTriggerData = locationTriggerData;
+        if (setRoute)
+            CyclistTrackFollower.SetRoute(locationTriggerData.position);
+        return locationTrigger;
     }
-
-    public void Trigger()
-    {
-        switch ((int)target)
-        {
-            case 0: //Quest
-                QuestManager.SetQuestStatus(id, targetStatus);
-                break;
-            case 1: //Quest Element
-                QuestManager.SetQuestElementStatus(id, targetStatus);
-                break;
-            case 2: //Sub Quest Element
-                //ADD THIS
-                break;
-        }
-    }
-
-    public enum Target { Quest, QuestElement, SubQuestElement };
 }

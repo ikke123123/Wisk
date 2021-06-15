@@ -8,8 +8,9 @@ using ThomasLib.Unity;
 
 public class CyclistManager : MonoBehaviour
 {
-    [SerializeField] private BezierWalkerWithSpeed walker = null;
-    [SerializeField] private BezierSpline spline = null;
+    [Tooltip("Slope modifier makes hills easier or harder. 1 is like real life, 0.1 is a tenth as hard, and 2 is twice as hard."), Range(0.1f, 2f)] public float slopeModifier = 1;
+
+    [SerializeField] private CyclistTrackFollower cyclistTrackFollower;
 
     [SerializeField] private float shortRefreshTime = 0.1f;
     [SerializeField] private float speedRefreshTime = 1 / 30;
@@ -58,10 +59,10 @@ public class CyclistManager : MonoBehaviour
     {
         while (true)
         {
-            float normalizedT = walker.NormalizedT;
+            float normalizedT = cyclistTrackFollower.m_normalizedT;
 
-            Vector3 location = spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * longRefreshTime, 1f, 36f));
-            float oneSecGrade = Vector3Tool.GetGrade(transform.position, location);
+            Vector3 location = cyclistTrackFollower.currentTrack.spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * longRefreshTime, 1f, 36f));
+            float oneSecGrade = Vector3Tool.GetGrade(transform.position, location) * slopeModifier;
 
             if (cp.ReceivedPermission)
                 cp.SetSimulationParameter(0f, oneSecGrade, bikePhysics.rollingCoeff, bikePhysics.frontalArea, bikePhysics.rho, bikePhysics.dragCoeff);
@@ -76,10 +77,10 @@ public class CyclistManager : MonoBehaviour
     {
         while (true)
         {
-            float normalizedT = walker.NormalizedT;
-            Vector3 location = spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * shortRefreshTime, 0.5f, 3f));
+            float normalizedT = cyclistTrackFollower.m_normalizedT;
+            Vector3 location = cyclistTrackFollower.currentTrack.spline.MoveAlongSpline(ref normalizedT, Mathf.Clamp(bikePhysics.SpeedMS * shortRefreshTime, 0.5f, 3f));
 
-            bikePhysics.grade = Vector3Tool.GetGrade(transform.position, location);
+            bikePhysics.grade = Vector3Tool.GetGrade(transform.position, location) * slopeModifier;
             onShortUpdate.Invoke();
             gradeOmeter.SetValue(bikePhysics.grade);
             yield return new WaitForSeconds(shortRefreshTime);
@@ -91,7 +92,7 @@ public class CyclistManager : MonoBehaviour
         while (true)
         {
             float speed = bikePhysics.UpdateSpeed(speedRefreshTime);
-            walker.speed = speed;
+            cyclistTrackFollower.speed = speed;
             onSpeedUpdate.Invoke();
             speedOmeter.SetValue(bikePhysics.SpeedKPH);
             yield return new WaitForSeconds(speedRefreshTime);

@@ -14,17 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questID: runaway
   questElementID: runaway02
-  questElementName: Bike Shop
+  questElementName: Go to the Bike Shop
   questElementDescription: Go to the bike shop
   dependency:
     dependencies: 0
-    nextQuestElementIDs: []
-    previousQuestElementIDsCompleted: []
-    previousQuestElementIDsFailed: []
+    nextQuestElementIDs:
+    - {fileID: 11400000, guid: 5a90e526a95579f409b2a31e734b9888, type: 2}
+    questElementIDsFailed: []
     questElementIDs: []
-  subQuestElements: []
+    myElement: {fileID: 0}
+  useRewards: 0
   rewards:
   - typeOf: 1
     id: gold
     quantity: 2
+  useDialogue: 0
+  dialogue: []
+  useLocationTrigger: 1
+  locationTriggerPrefab: {fileID: 11400000, guid: d925bba16cb06204fb8018f11c47949a, type: 2}
+  locationTrigger:
+    position: {x: 26.4, y: 10, z: 303.9}
+    target: 1
+    id: runaway02
+    targetStatus: 3
   status: 2
+  questUIManager: {fileID: 0}
+  questUIManagerSpot: 0
