@@ -51,7 +51,7 @@ public class Dependency
         {
             SetStatuses(nextQuestElementIDs, Status.Active);
         }
-        else QuestManager.SetQuestElementStatus(myElement.questID, Status.Completed);
+        else QuestManager.SetQuestStatus(myElement.questID, Status.Completed);
         return true;
     }
 
@@ -77,16 +77,14 @@ public class Dependency
         {
             SetStatuses(nextQuestElementIDs, Status.Active);
         }
-        else QuestManager.SetQuestElementStatus(myElement.questID, Status.Completed);
+        else QuestManager.SetQuestStatus(myElement.questID, Status.Completed);
         return true;
     }
 
     public static void SetStatuses(QuestElement[] questElements, Status status)
     {
         foreach (QuestElement questElement in questElements)
-        {
             QuestManager.SetQuestElementStatus(questElement.questElementID, status);
-        }
     }
 
     ////Parallel Completion

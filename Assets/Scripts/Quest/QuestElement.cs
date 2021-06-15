@@ -33,6 +33,8 @@ public class QuestElement : ScriptableObject
 
     public Status CheckStatus(bool save = true)
     {
+        dependency.myElement = this;
+
         if (save) status = (Status)PlayerPrefs.GetInt(questID, 3);
         else status = Status.Locked;
 
@@ -140,6 +142,10 @@ public class QuestElement : ScriptableObject
 
         if (locationTriggerGameObject != null)
             Destroy(locationTriggerGameObject);
+
+        dependency.OnCompleted();
+
+        MessageManager.SendMessage(MessageManager.TypeOf.Quest, questElementName, "Was completed!");
     }
 
     private void OnLocked()
@@ -163,6 +169,8 @@ public class QuestElement : ScriptableObject
         if (useDialogue)
             foreach (BasicDialogue basicDialogue in dialogue)
                 Dialogue.AddText(basicDialogue.title, basicDialogue.text);
+
+        //MessageManager.SendMessage(MessageManager.TypeOf.Quest, QuestManager.GetQuest(questID).questName, "Quest updated");
     }
 
     #endregion

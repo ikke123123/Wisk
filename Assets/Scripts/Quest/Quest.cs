@@ -156,6 +156,8 @@ public class Quest : ScriptableObject
 
         //ADD CHECK FOR FIRST TIME DEPENDENCIES
         QuestManager.SetQuestElementStatus(questElements[0].questElementID, Status.Active);
+
+        MessageManager.SendMessage(MessageManager.TypeOf.Quest, questName, "Quest added!");
     }
 
     #endregion

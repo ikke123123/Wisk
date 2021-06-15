@@ -21,6 +21,19 @@ public class QuestUIManager : MonoBehaviour
         if (!qUIM.Contains(this)) qUIM.Add(this);
     }
 
+    private void OnDestroy()
+    {
+        if (qUIM.Contains(this))
+            qUIM.Remove(this);
+    }
+
+    private void Start()
+    {
+        quest.enabled = false;
+        foreach (TextMeshProUGUI questElement in questElements)
+            questElement.enabled = false;
+    }
+
     public static QuestUIManager GetUIManager()
     {
         foreach (QuestUIManager questUIManager in qUIM)
@@ -46,7 +59,7 @@ public class QuestUIManager : MonoBehaviour
         {
             if (!activeSpots[i])
             {
-                questElements[i].gameObject.SetActive(true);
+                questElements[i].enabled = true;
                 activeSpots[i] = true;
                 return i;
             }
@@ -56,7 +69,7 @@ public class QuestUIManager : MonoBehaviour
 
     public void ReleaseElementSpot(int index)
     {
-        questElements[index].gameObject.SetActive(false);
+        questElements[index].enabled = false;
         activeSpots[index] = false;
     }
 
@@ -68,6 +81,7 @@ public class QuestUIManager : MonoBehaviour
 
     public void SetQuest(string quest)
     {
+
         this.quest.text = quest;
     }
 
@@ -92,7 +106,7 @@ public class QuestUIManager : MonoBehaviour
 
     public void Enable(bool enable = true)
     {
-        gameObject.SetActive(enable);
+        quest.enabled = enabled;
     }
 
 

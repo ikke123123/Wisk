@@ -124,7 +124,8 @@ public class CyclistTrackFollower : MonoBehaviour
                 if (trackToFollow.Count > indexOfCurrentTrack + 1) //If there are more roads in the trackToFollow list select the next one.
                 {
                     currentTrack = trackToFollow[indexOfCurrentTrack + 1];
-                    trackToFollow.RemoveAt(indexOfCurrentTrack);
+                    //Removes the track that's now selected from the list.
+                    trackToFollow.RemoveAt(indexOfCurrentTrack + 1);
                 }
                 else
                 {
