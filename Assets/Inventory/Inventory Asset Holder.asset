@@ -1,22 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acfa003490e05c545a9d5d78c14fbbb1, type: 3}
-  m_Name: Inventory Asset Holder
-  m_EditorClassIdentifier: 
-  inventoryAssets:
-  - {fileID: 11400000, guid: 7a5a7ea45a02086488b64db2d9304df7, type: 2}
-  - {fileID: 11400000, guid: b10d70d5c4f0f1448b0f6bac2c825d8a, type: 2}
-  - {fileID: 11400000, guid: 6924e5ee5b0af62449333ca2f7a5ccaa, type: 2}
-  - {fileID: 11400000, guid: f25e526ff96e93648bcba7d4c399bb2e, type: 2}
-  - {fileID: 11400000, guid: 4354645a86d54494ca43e37c7864001c, type: 2}
-  - {fileID: 11400000, guid: e1724aad270501e43a86d2e47c598f45, type: 2}
-  - {fileID: 11400000, guid: 39d623a17344f034783180ed801101be, type: 2}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3cfe98df6d2778a89f2305741af7b19a7196b70cc077c5f71f4228a83d75e696
+size 934
