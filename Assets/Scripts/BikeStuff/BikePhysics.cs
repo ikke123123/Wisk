@@ -37,17 +37,17 @@ public class BikePhysics
     public float SpeedMPH => SpeedMS * 2.237f;
 
     /// <summary>
-    /// Air Drag Coefficient, default: 0.375
+    /// Air Drag Coefficient, default: 0.650
     /// </summary>
-    public float dragCoeff = 0.375f;
+    public float dragCoeff = 0.650f;
     /// <summary>
-    /// Surface area in m2, default: 0.650
+    /// Surface area in m2, default: 0.375
     /// </summary>
-    public float frontalArea = 0.650f;
+    public float frontalArea = 0.375f;
     /// <summary>
-    /// Air density in kg/m3, default: 1.293
+    /// Air density in kg/m3, default: 1.225
     /// </summary>
-    public float rho = 1.293f;
+    public float rho = 1.225f;
     /// <summary>
     /// Gravitational acceleration in m/s2, default: 9.8067
     /// </summary>

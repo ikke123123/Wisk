@@ -54,7 +54,7 @@ public class Quest : ScriptableObject
     {
         this.status = status;
 
-        switch ((int)this.status)
+        switch ((int)status)
         {
             case 0: //Active
                 OnActive();

@@ -40,6 +40,7 @@ public class QuestUIManager : MonoBehaviour
         {
             if (questUIManager.active == false)
             {
+                questUIManager.active = true;
                 questUIManager.Enable(true);
                 return questUIManager;
             }
@@ -81,7 +82,6 @@ public class QuestUIManager : MonoBehaviour
 
     public void SetQuest(string quest)
     {
-
         this.quest.text = quest;
     }
 
@@ -90,24 +90,8 @@ public class QuestUIManager : MonoBehaviour
         questElements[index].text = questElement;
     }
 
-
-    //private void SetQuestElements(string[] questElements)
-    //{
-    //    for (int i = 0; i < this.questElements.Length; i++)
-    //    {
-    //        if (i < questElements.Length)
-    //        {
-    //            this.questElements[i].gameObject.SetActive(true);
-    //            this.questElements[i].text = questElements[i];
-    //        }
-    //        else this.questElements[i].gameObject.SetActive(false);
-    //    }
-    //}
-
     public void Enable(bool enable = true)
     {
-        quest.enabled = enabled;
+        quest.enabled = enable;
     }
-
-
 }

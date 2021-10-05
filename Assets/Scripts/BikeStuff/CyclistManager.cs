@@ -21,7 +21,9 @@ public class CyclistManager : MonoBehaviour
     [SerializeField] private float mass = 80;
 
     [SerializeField] private UnityEvent onLongUpdate, onShortUpdate, onSpeedUpdate = null;
-    [SerializeField] private MonoBehaviourOmeter speedOmeter, gradeOmeter, powerOmeter, cadanceOmeter = null;
+    [SerializeField] private MonoBehaviourOmeter speedOmeter, powerOmeter = null;
+    [SerializeField] private CadenceOmeter cadenceOmeter = null;
+    [SerializeField] private GradeOmeter gradeOmeter = null;
 
     [Header("Debug")]
     public BikePhysics bikePhysics = null;
@@ -52,7 +54,7 @@ public class CyclistManager : MonoBehaviour
     {
         bikePhysics.power = ibd.InstPwr;
         powerOmeter.SetValue(bikePhysics.power);
-        cadanceOmeter.SetValue(ibd.InstCad);
+        cadenceOmeter.SetValue(ibd.InstCad);
     }
 
     private IEnumerator LongUpdater()

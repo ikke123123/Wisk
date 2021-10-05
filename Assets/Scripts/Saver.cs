@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using ThomasLib.Time;
 using ThomasLib.Unity;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +14,8 @@ public class Saver : MonoBehaviour
 {
     [SerializeField, Tooltip("In time in seconds.")] private float pollFrequency = 1;
     [SerializeField] private CyclistManager cyclistManager = null;
-    [SerializeField] private Button startButton = null;
-    [SerializeField] private Button stopButton = null;
     [SerializeField] private MonoBehaviourOmeter avgSpeedOmeter, avgPowerOmeter, elevationOmeter = null;
+    [SerializeField] private TextMeshProUGUI elapsedTime = null;
 
     /// <summary>
     /// Turn off poll data and save it safely.
@@ -33,8 +33,12 @@ public class Saver : MonoBehaviour
     {
         bikePhysics = cyclistManager.bikePhysics;
         ibd = BLEManager.Instance.fms_IBD;
-        startButton.gameObject.SetActive(true);
-        stopButton.gameObject.SetActive(false);
+        StartPoll();
+    }
+
+    private void OnDisable()
+    {
+        StopPoll();
     }
 
     public void StartPoll()
@@ -42,20 +46,19 @@ public class Saver : MonoBehaviour
         if (pollDataAsync != null)
             return;
         active = true;
-        startButton.gameObject.SetActive(false);
-        stopButton.gameObject.SetActive(true);
         pollDataAsync = StartCoroutine(PollDataAsync());
     }
 
     public void StopPoll()
     {
         active = false;
-        stopButton.interactable = false;
     }
 
     private IEnumerator PollDataAsync()
     {
         currentTraining = new Training();
+
+        elapsedTime.text = "00:00:00";
 
         Vector3 lastPosition = transform.position;
 
@@ -64,16 +67,13 @@ public class Saver : MonoBehaviour
             currentTraining.Add(lastPosition, transform.position, bikePhysics.power, bikePhysics.SpeedKPH, ibd.InstCad);
             SetOmeters(currentTraining.AverageSpeed, currentTraining.AveragePower, currentTraining.TotalElevation);
             lastPosition = transform.position;
+            elapsedTime.text = currentTraining.ElapsedTime.ToString(@"hh\:mm\:ss");
             yield return new WaitForSeconds(pollFrequency);
         }
 
         SetOmeters(0, 0, 0);
 
         currentTraining.Save();
-
-        startButton.gameObject.SetActive(true);
-        stopButton.gameObject.SetActive(false);
-        stopButton.interactable = true;
 
         currentTraining = null;
     }

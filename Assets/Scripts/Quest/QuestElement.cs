@@ -137,8 +137,9 @@ public class QuestElement : ScriptableObject
         questUIManager.ReleaseElementSpot(questUIManagerSpot);
         questUIManagerSpot = 0;
 
-        foreach (Reward reward in rewards)
-            reward.GiveReward();
+        if (useRewards)
+            foreach (Reward reward in rewards)
+                reward.GiveReward();
 
         if (locationTriggerGameObject != null)
             Destroy(locationTriggerGameObject);
@@ -163,7 +164,7 @@ public class QuestElement : ScriptableObject
         questUIManagerSpot = questUIManager.GetElementSpot();
         questUIManager.SetQuestElement(questElementName, questUIManagerSpot);
 
-        if (useLocationTrigger == true)
+        if (useLocationTrigger)
             locationTriggerPrefab.Spawn(locationTrigger, true);
 
         if (useDialogue)

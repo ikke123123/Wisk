@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ThomasLib.Num;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,6 @@ public class LevelBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI targetXPValue = null;
     [SerializeField] private Image image = null;
 
-    private float maxWidth;
-
     private void Awake()
     {
         if (lB != null & lB != this)
@@ -23,11 +22,6 @@ public class LevelBar : MonoBehaviour
             Destroy(lB);
         }
         lB = this;
-    }
-
-    private void Start()
-    {
-        maxWidth = image.rectTransform.rect.width;
     }
 
     /// <summary>
@@ -40,10 +34,14 @@ public class LevelBar : MonoBehaviour
 
     public void UpdateText()
     {
-        levelNumber.text = XPManager.Level.ToString();
-        targetLevelNumber.text = (XPManager.Level + 1).ToString();
-        currentXPValue.text = XPManager.XP.ToString();
-        targetXPValue.text = XPManager.CurrentLevelTarget.ToString();
-        image.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Lerp(0, maxWidth, XPManager.LevelT));
+        int currentLevel = XPManager.Level;
+        int currentXP = XPManager.XP;
+        int currentLevelTarget = XPManager.CurrentLevelTarget;
+
+        levelNumber.text = currentLevel.ToString();
+        targetLevelNumber.text = (currentLevel + 1).ToString();
+        currentXPValue.text = currentXP.ToString() + " XP";
+        targetXPValue.text = currentLevelTarget.ToString() + " XP";
+        image.fillAmount = XPManager.LevelT;
     }
 }
