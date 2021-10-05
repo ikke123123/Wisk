@@ -123,7 +123,7 @@ public class Training
         };
         Distance += newPoll.distanceDelta / 1000f; //convert from meters to km
         ElapsedTime = StartDateTime - DateTime.UtcNow;
-        AverageSpeed = (float)(Distance / (ElapsedTime.TotalSeconds > 0 ? ElapsedTime.TotalHours : 0.1f));
+        AverageSpeed = (float)(Distance / ElapsedTime.TotalHours);
         TotalPower += power;
         TotalCadence += cadence;
         TotalElevation += Mathf.Abs(newPoll.elevationDelta);
