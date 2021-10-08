@@ -14,3 +14,6 @@ Here is a demonstration of the latest version (which still needs some bug fixing
 ![image](https://user-images.githubusercontent.com/45997197/136011800-572d5067-0940-47c0-af0f-eda575cc99af.png)
 
 ![image](https://user-images.githubusercontent.com/45997197/136008012-6eb8babf-61a6-4f32-a99d-94439334eeff.png)
+
+#### The idea behind Wisk
+![Asset 6](https://user-images.githubusercontent.com/45997197/136531386-f2c01247-b10e-4d3e-96c3-44b158dc7508.png)
